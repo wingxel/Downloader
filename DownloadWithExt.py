@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-Download files with the provided extension from web page
+Scrape webpage for images with provided extensions and download them.
 https://wingxel.github.io/website/index.html
 """
 
@@ -16,12 +16,13 @@ from Downloader import download
 
 
 def usage() -> None:
-	print("""
--u or --url		URL to download from.
--s or --save		Where to put the downloaded files.
--e or --ext		Extension to look for.
--h or --help		Print this help text.
-""")
+	print("""Usage:
+-u or --url     URL to download from.
+-s or --save    Where to put the downloaded files.
+-e or --ext     Extension to look for.
+-h or --help    Print this help text.
+Example:
+python3 DownloadWithExt.py -u http://the.webpage.link/ -s /where/to/save/images -e .jpg -e .png""")
 
 
 def get_args() -> dict:
@@ -58,21 +59,31 @@ def main() -> None:
 
 		links_data = []
 		for link in links:
-			if link.get("href").endswith(provided_args["ext"]):
-				 links_data.append(link.get("href"))
+			try:
+				if link.get("href").endswith(provided_args["ext"]):
+					links_data.append(link.get("href"))
+			except Exception as err:
+				print(f"Error: {str(err)}")
 
 		imgs_data = []
 		for img in imgs:
-			if img.get("src").endswith(provided_args["ext"]):
-				imgs_data.append(img.get("src"))
+			try:
+				if img.get("src").endswith(provided_args["ext"]):
+					imgs_data.append(img.get("src"))
+			except Exception as err:
+				print(f"Error: {str(err)}")
 
 		if len(links_data) > 0:
 			for link in links_data:
-				download(os.path.join(provided_args["url"], link), provided_args["save"])
+				res = download(os.path.join(provided_args["url"], link), provided_args["save"])
+				if not res:
+					download(link, provided_args["save"])
 
 		if len(imgs_data) > 0:
 			for img in imgs_data:
-				download(os.path.join(provided_args["url"], img), provided_args["save"])
+				res = download(os.path.join(provided_args["url"], img), provided_args["save"])
+				if not res:
+					download(img, provided_args["save"])
 		print("Done...........")
 	else:
 		usage()

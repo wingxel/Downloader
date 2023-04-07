@@ -47,7 +47,7 @@ def get_args() -> dict:
 def download_file(url: str, sv: str) -> str:
     local_filename = os.path.join(sv, url.split('/')[-1])
     data = {
-        "User-agent": "Mozilla/95.0"
+        "User-agent": "Mozilla/105.0"
     }
     if os.path.exists(local_filename):
         return local_filename
